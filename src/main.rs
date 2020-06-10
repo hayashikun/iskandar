@@ -1,32 +1,28 @@
-use crate::config::Config;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::process::Command;
 use std::{env, process};
 
+use clap::Clap;
+
+use crate::config::Config;
+
 mod config;
+mod opts;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    println!("{:?}", args);
+    let opts: opts::Opts = opts::Opts::parse();
 
-    if args.len() < 2 {
-        eprintln!("Not enough arguments");
-        process::exit(1);
-    }
-    match args[1].as_str() {
-        "init" => init(),
-        "nginx" => nginx(args[2..].to_vec()),
-        _ => {
-            eprintln!("Invalid arguments");
-            process::exit(1);
-        }
+    match opts.target {
+        opts::Target::Init => init(),
+        opts::Target::Nginx(opts) => nginx(opts),
+        opts::Target::Mysql(opts) => mysql(opts),
     };
 }
 
 fn init() {
-    let mut config = config::Config::template();
+    let mut config = Config::template();
     config.project_root = env::current_dir()
         .unwrap()
         .into_os_string()
@@ -46,37 +42,37 @@ fn load_config() -> Config {
     Config::from_toml(toml)
 }
 
-fn nginx(args: Vec<String>) {
+fn nginx(opts: opts::NginxOpts) {
     let config = load_config();
-    println!("{:?}, {:?}", args, config);
     let project_root = PathBuf::from(config.project_root);
     let nginx_conf_dir = PathBuf::from(config.nginx_conf_dir);
 
-    if args.len() < 1 {
-        eprintln!("Not enough arguments");
-        process::exit(1);
-    }
-    let mut cmd = match args[0].as_str() {
-        "restart" => Command::new(config.nginx_restart_command),
-        "backup" => Command::new(format!(
+    let mut cmd = match opts.action {
+        opts::NginxAction::Restart => Command::new(config.nginx_restart_command),
+        opts::NginxAction::Backup => Command::new(format!(
             "cp -r {} {}",
             nginx_conf_dir.to_str().unwrap(),
             project_root.join("nginx.backup").to_str().unwrap()
         )),
-        "apply" => Command::new(format!(
+        opts::NginxAction::Apply => Command::new(format!(
             "cp {} {}",
             project_root.join(config.nginx_conf_file).to_str().unwrap(),
             nginx_conf_dir.to_str().unwrap()
         )),
-        "unapply" => Command::new(format!(
+        opts::NginxAction::Unapply => Command::new(format!(
             "rm {}",
             nginx_conf_dir
                 .join(config.nginx_conf_file)
                 .to_str()
                 .unwrap(),
         )),
-        _ => panic!("Invalid option"),
     };
 
-    println!("{:?}", cmd)
+    if opts.dry {
+        println!("{:?}", cmd);
+    } else {
+        cmd.spawn().expect("Failed to ")
+    }
 }
+
+fn mysql(opts: opts::MysqlOpts) {}
