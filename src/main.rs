@@ -1,8 +1,8 @@
+use std::env;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::PathBuf;
-use std::process::Command;
-use std::{env, process};
+use std::process::{Command, Stdio};
 
 use clap::Clap;
 
@@ -71,8 +71,43 @@ fn nginx(opts: opts::NginxOpts) {
     if opts.dry {
         println!("{:?}", cmd);
     } else {
-        cmd.spawn().expect("Failed to ")
+        cmd.stdout(Stdio::piped())
+            .spawn()
+            .expect("Failed to run command");
     }
 }
 
-fn mysql(opts: opts::MysqlOpts) {}
+fn mysql(opts: opts::MysqlOpts) {
+    let config = load_config();
+    let project_root = PathBuf::from(config.project_root);
+    let mysql_conf_dir = PathBuf::from(config.mysql_conf_dir);
+
+    let mut cmd = match opts.action {
+        opts::MysqlAction::Restart => Command::new(config.mysql_restart_command),
+        opts::MysqlAction::Backup => Command::new(format!(
+            "cp -r {} {}",
+            mysql_conf_dir.to_str().unwrap(),
+            project_root.join("mysql.backup").to_str().unwrap()
+        )),
+        opts::MysqlAction::Apply => Command::new(format!(
+            "cp {} {}",
+            project_root.join(config.mysql_conf_file).to_str().unwrap(),
+            mysql_conf_dir.to_str().unwrap()
+        )),
+        opts::MysqlAction::Unapply => Command::new(format!(
+            "rm {}",
+            mysql_conf_dir
+                .join(config.mysql_conf_file)
+                .to_str()
+                .unwrap(),
+        )),
+    };
+
+    if opts.dry {
+        println!("{:?}", cmd);
+    } else {
+        cmd.stdout(Stdio::piped())
+            .spawn()
+            .expect("Failed to run command");
+    }
+}
