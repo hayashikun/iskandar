@@ -4,7 +4,6 @@ use std::io::{BufRead, BufReader, Read, Write};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
-use crate::config::Config;
 use chrono::{DateTime, Local};
 use clap::Clap;
 use regex::Regex;
@@ -24,7 +23,7 @@ fn main() {
 }
 
 fn init() {
-    let mut config = Config::template();
+    let mut config = config::Config::template();
     config.project_root = env::current_dir()
         .unwrap()
         .into_os_string()
@@ -35,13 +34,13 @@ fn init() {
     writeln!(&mut file, "{}", config.to_toml()).unwrap();
 }
 
-fn load_config() -> Config {
+fn load_config() -> config::Config {
     let mut toml = String::new();
     File::open("iskandar.toml")
         .unwrap()
         .read_to_string(&mut toml)
         .unwrap();
-    Config::from_toml(toml)
+    config::Config::from_toml(toml)
 }
 
 fn run_command(command: String) -> Vec<String> {
