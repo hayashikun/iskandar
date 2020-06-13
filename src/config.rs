@@ -24,10 +24,10 @@ impl Config {
             mysql_conf_file: "mysql.cnf".to_string(),
             nginx_conf_dir: "/etc/nginx/conf.d/".to_string(),
             mysql_conf_dir: "/etc/mysql/conf.d/".to_string(),
-            nginx_restart_command: "echo restart nginx".to_string(),
-            mysql_restart_command: "echo restart mysql".to_string(),
+            nginx_restart_command: "echo please edit iskandar.toml to restart nginx".to_string(),
+            mysql_restart_command: "echo please edit iskandar.toml to restart mysql".to_string(),
             benchmark_command:
-                "echo benchmark start; echo benchmark score: 884 point; echo benchmark end"
+                "echo please edit iskandar.toml; echo benchmark start; echo benchmark score: 884 point; echo benchmark end"
                     .to_string(),
             benchmark_score_regex: r"score: (\d+) point".to_string(),
         };

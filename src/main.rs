@@ -70,33 +70,31 @@ fn nginx(opts: opts::NginxOpts) {
     let project_root = PathBuf::from(config.project_root);
     let nginx_conf_dir = PathBuf::from(config.nginx_conf_dir);
 
-    let mut cmd = match opts.action {
-        opts::NginxAction::Restart => Command::new(config.nginx_restart_command),
-        opts::NginxAction::Backup => Command::new(format!(
+    let command = match opts.action {
+        opts::NginxAction::Restart => config.nginx_restart_command,
+        opts::NginxAction::Backup => format!(
             "cp -r {} {}",
             nginx_conf_dir.to_str().unwrap(),
             project_root.join("nginx.backup").to_str().unwrap()
-        )),
-        opts::NginxAction::Apply => Command::new(format!(
+        ),
+        opts::NginxAction::Apply => format!(
             "cp {} {}",
             project_root.join(config.nginx_conf_file).to_str().unwrap(),
             nginx_conf_dir.to_str().unwrap()
-        )),
-        opts::NginxAction::Unapply => Command::new(format!(
+        ),
+        opts::NginxAction::Unapply => format!(
             "rm {}",
             nginx_conf_dir
                 .join(config.nginx_conf_file)
                 .to_str()
                 .unwrap(),
-        )),
+        ),
     };
 
     if opts.dry {
-        println!("{:?}", cmd);
+        println!("Dry run: {:?}", command);
     } else {
-        cmd.stdout(Stdio::piped())
-            .spawn()
-            .expect("Failed to run command");
+        run_command(command);
     }
 }
 
@@ -105,32 +103,30 @@ fn mysql(opts: opts::MysqlOpts) {
     let project_root = PathBuf::from(config.project_root);
     let mysql_conf_dir = PathBuf::from(config.mysql_conf_dir);
 
-    let mut cmd = match opts.action {
-        opts::MysqlAction::Restart => Command::new(config.mysql_restart_command),
-        opts::MysqlAction::Backup => Command::new(format!(
+    let command = match opts.action {
+        opts::MysqlAction::Restart => config.mysql_restart_command,
+        opts::MysqlAction::Backup => format!(
             "cp -r {} {}",
             mysql_conf_dir.to_str().unwrap(),
             project_root.join("mysql.backup").to_str().unwrap()
-        )),
-        opts::MysqlAction::Apply => Command::new(format!(
+        ),
+        opts::MysqlAction::Apply => format!(
             "cp {} {}",
             project_root.join(config.mysql_conf_file).to_str().unwrap(),
             mysql_conf_dir.to_str().unwrap()
-        )),
-        opts::MysqlAction::Unapply => Command::new(format!(
+        ),
+        opts::MysqlAction::Unapply => format!(
             "rm {}",
             mysql_conf_dir
                 .join(config.mysql_conf_file)
                 .to_str()
                 .unwrap(),
-        )),
+        ),
     };
 
     if opts.dry {
-        println!("{:?}", cmd);
+        println!("Dry run: {:?}", command);
     } else {
-        cmd.stdout(Stdio::piped())
-            .spawn()
-            .expect("Failed to run command");
+        run_command(command);
     }
 }
