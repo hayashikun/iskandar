@@ -1,12 +1,13 @@
 use std::env;
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
-use clap::Clap;
-
 use crate::config::Config;
+use chrono::{DateTime, Local};
+use clap::Clap;
+use regex::Regex;
 
 mod config;
 mod opts;
@@ -60,9 +61,38 @@ fn run_command(command: String) -> Vec<String> {
     return results;
 }
 
+fn save_score(score: u32) {
+    let datetime: DateTime<Local> = Local::now();
+    let mut file = OpenOptions::new()
+        .create(true)
+        .write(true)
+        .append(true)
+        .open("score.csv")
+        .unwrap();
+    if file.metadata().unwrap().len() == 0 {
+        writeln!(file, "datetime, score").unwrap();
+    }
+    writeln!(file, "{}, {}", datetime, score).unwrap();
+}
+
 fn benchmark() {
     let config = load_config();
-    run_command(config.benchmark_command);
+    let lines = run_command(config.benchmark_command);
+
+    let re = Regex::new(&config.benchmark_score_regex).unwrap();
+    for line in lines.iter().rev() {
+        if let Some(caps) = re.captures(&line) {
+            let score: u32 = caps
+                .get(1)
+                .expect("Failed to find score")
+                .as_str()
+                .trim()
+                .parse()
+                .expect("Failed to parse score");
+            save_score(score);
+            break;
+        }
+    }
 }
 
 fn nginx(opts: opts::NginxOpts) {
