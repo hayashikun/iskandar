@@ -11,28 +11,28 @@ Run benchmark
 
 ## nginx
 
-### `nginx restart` (TODO)
+### `nginx restart`
 Restart nginx
 
-### `nginx backup` (TODO)
+### `nginx backup`
 Backup `nginx_conf_dir`
 
-### `nginx apply` (TODO)
+### `nginx apply`
 Copy `nginx_conf_file` to `nginx_conf_dir`
 
-### `nginx unapply` (TODO)
+### `nginx unapply`
 Remove `nginx_conf_file` from `nginx_conf_dir`
 
 ## mysql
 
-### `mysql restart` (TODO)
+### `mysql restart`
 Restart mysql
 
-### `mysql backup` (TODO)
+### `mysql backup`
 Backup `mysql_conf_dir`
 
-### `mysql apply` (TODO)
+### `mysql apply`
 Copy `mysql_conf_file` to `mysql_conf_dir`
 
-### `mysql unapply` (TODO)
+### `mysql unapply`
 Remove `mysql_conf_file` from `mysql_conf_dir`
