@@ -1,6 +1,6 @@
 use std::env;
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::{BufRead, BufReader, Read, Write};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
@@ -16,6 +16,7 @@ fn main() {
 
     match opts.target {
         opts::Target::Init => init(),
+        opts::Target::Benchmark => benchmark(),
         opts::Target::Nginx(opts) => nginx(opts),
         opts::Target::Mysql(opts) => mysql(opts),
     };
@@ -40,6 +41,28 @@ fn load_config() -> Config {
         .read_to_string(&mut toml)
         .unwrap();
     Config::from_toml(toml)
+}
+
+fn run_command(command: String) -> Vec<String> {
+    let child = Command::new("bash")
+        .arg("-c")
+        .arg(command)
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("Failed to run command");
+    let reader = BufReader::new(child.stdout.unwrap());
+    let mut results = Vec::new();
+    for l in reader.lines() {
+        let line = l.unwrap();
+        println!("{}", line);
+        results.push(line);
+    }
+    return results;
+}
+
+fn benchmark() {
+    let config = load_config();
+    run_command(config.benchmark_command);
 }
 
 fn nginx(opts: opts::NginxOpts) {

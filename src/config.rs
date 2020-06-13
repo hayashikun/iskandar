@@ -9,9 +9,10 @@ pub struct Config {
     pub mysql_conf_file: String,
     pub nginx_conf_dir: String,
     pub mysql_conf_dir: String,
-    pub deploy_commands: Vec<String>,
     pub nginx_restart_command: String,
     pub mysql_restart_command: String,
+    pub benchmark_command: String,
+    pub benchmark_score_regex: String,
 }
 
 impl Config {
@@ -23,9 +24,12 @@ impl Config {
             mysql_conf_file: "mysql.cnf".to_string(),
             nginx_conf_dir: "/etc/nginx/conf.d/".to_string(),
             mysql_conf_dir: "/etc/mysql/conf.d/".to_string(),
-            deploy_commands: vec!["echo Build app".to_string()],
-            nginx_restart_command: "systemctl restart nginx".to_string(),
-            mysql_restart_command: "systemctl restart mysql".to_string(),
+            nginx_restart_command: "echo restart nginx".to_string(),
+            mysql_restart_command: "echo restart mysql".to_string(),
+            benchmark_command:
+                "echo benchmark start; echo benchmark score: 884 point; echo benchmark end"
+                    .to_string(),
+            benchmark_score_regex: r"score: (\d+) point".to_string(),
         };
     }
 
