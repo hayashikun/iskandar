@@ -6,7 +6,7 @@ Create config file `iskandar.toml`
 ### `deploy` (TODO)
 Deploy application
 
-## `benchmark` (TODO)
+### `benchmark`
 Run benchmark
 
 ## nginx
