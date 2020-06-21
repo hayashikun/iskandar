@@ -66,7 +66,7 @@ fn deploy() {
     run_command(config.deploy_command);
 }
 
-fn save_score(score: u32) {
+fn save_score(score: f32) {
     let datetime: DateTime<Local> = Local::now();
     let mut file = OpenOptions::new()
         .create(true)
@@ -87,7 +87,7 @@ fn benchmark() {
     let re = Regex::new(&config.benchmark_score_regex).unwrap();
     for line in lines.iter().rev() {
         if let Some(caps) = re.captures(&line) {
-            let score: u32 = caps
+            let score: f32 = caps
                 .get(1)
                 .expect("Failed to find score")
                 .as_str()
