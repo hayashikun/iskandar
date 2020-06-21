@@ -3,7 +3,7 @@
 ### `init`
 Create config file `iskandar.toml`
 
-### `deploy` (TODO)
+### `deploy`
 Deploy application
 
 ### `benchmark`

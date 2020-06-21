@@ -16,6 +16,7 @@ fn main() {
 
     match opts.target {
         opts::Target::Init => init(),
+        opts::Target::Deploy => deploy(),
         opts::Target::Benchmark => benchmark(),
         opts::Target::Nginx(opts) => nginx(opts),
         opts::Target::Mysql(opts) => mysql(opts),
@@ -58,6 +59,11 @@ fn run_command(command: String) -> Vec<String> {
         results.push(line);
     }
     return results;
+}
+
+fn deploy() {
+    let config = load_config();
+    run_command(config.deploy_command);
 }
 
 fn save_score(score: u32) {

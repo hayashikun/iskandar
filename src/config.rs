@@ -13,6 +13,7 @@ pub struct Config {
     pub mysql_restart_command: String,
     pub benchmark_command: String,
     pub benchmark_score_regex: String,
+    pub deploy_command: String,
 }
 
 impl Config {
@@ -30,6 +31,7 @@ impl Config {
                 "echo please edit iskandar.toml; echo benchmark start; echo benchmark score: 884 point; echo benchmark end"
                     .to_string(),
             benchmark_score_regex: r"score: (\d+) point".to_string(),
+            deploy_command: "echo please edit iskandar.toml; echo deploy!".to_string()
         };
     }
 

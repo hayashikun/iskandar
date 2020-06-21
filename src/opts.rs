@@ -11,6 +11,7 @@ pub struct Opts {
 #[derive(Clap)]
 pub enum Target {
     Init,
+    Deploy,
     Benchmark,
     Nginx(NginxOpts),
     Mysql(MysqlOpts),
