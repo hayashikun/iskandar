@@ -11,17 +11,14 @@ Run benchmark
 
 ## nginx
 
-### `nginx restart`
-Restart nginx
+### `nginx init`
+Copy `nginx_conf_files` from `nginx_conf_dir` to project dir
 
-### `nginx backup`
-Backup `nginx_conf_dir`
+### `nginx reload`
+Reload ngix
 
 ### `nginx apply`
-Copy `nginx_conf_file` to `nginx_conf_dir`
-
-### `nginx unapply`
-Remove `nginx_conf_file` from `nginx_conf_dir`
+Copy `nginx_conf_files`  from project dir to `nginx_conf_dir`
 
 ## mysql
 

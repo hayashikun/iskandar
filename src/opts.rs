@@ -15,7 +15,6 @@ pub enum Target {
     Benchmark,
     Nginx(NginxOpts),
     Mysql(MysqlOpts),
-    Redis(RedisOpts),
 }
 
 #[derive(Clap)]
@@ -69,35 +68,6 @@ impl FromStr for MysqlAction {
             "backup" => Ok(MysqlAction::Backup),
             "apply" => Ok(MysqlAction::Apply),
             "unapply" => Ok(MysqlAction::Unapply),
-            _ => Err("no match"),
-        }
-    }
-}
-
-#[derive(Clap)]
-pub struct RedisOpts {
-    pub action: RedisAction,
-
-    #[clap(short, long, about = "Dry run")]
-    pub dry: bool,
-}
-
-pub enum RedisAction {
-    Restart,
-    Backup,
-    Apply,
-    Unapply,
-}
-
-impl FromStr for RedisAction {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "restart" => Ok(RedisAction::Restart),
-            "backup" => Ok(RedisAction::Backup),
-            "apply" => Ok(RedisAction::Apply),
-            "unapply" => Ok(RedisAction::Unapply),
             _ => Err("no match"),
         }
     }

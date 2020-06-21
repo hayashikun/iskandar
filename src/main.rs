@@ -20,7 +20,6 @@ fn main() {
         opts::Target::Benchmark => benchmark(),
         opts::Target::Nginx(opts) => nginx(opts),
         opts::Target::Mysql(opts) => mysql(opts),
-        opts::Target::Redis(opts) => redis(opts),
     };
 }
 
@@ -160,39 +159,6 @@ fn mysql(opts: opts::MysqlOpts) {
             "rm {}",
             mysql_conf_dir
                 .join(config.mysql_conf_file)
-                .to_str()
-                .unwrap(),
-        ),
-    };
-
-    if opts.dry {
-        println!("Dry run: {:?}", command);
-    } else {
-        run_command(command);
-    }
-}
-
-fn redis(opts: opts::RedisOpts) {
-    let config = load_config();
-    let project_root = PathBuf::from(config.project_root);
-    let redis_conf_dir = PathBuf::from(config.redis_conf_dir);
-
-    let command = match opts.action {
-        opts::RedisAction::Restart => config.redis_restart_command,
-        opts::RedisAction::Backup => format!(
-            "cp -r {} {}",
-            redis_conf_dir.to_str().unwrap(),
-            project_root.join("redis.backup").to_str().unwrap()
-        ),
-        opts::RedisAction::Apply => format!(
-            "cp {} {}",
-            project_root.join(config.redis_conf_file).to_str().unwrap(),
-            redis_conf_dir.to_str().unwrap()
-        ),
-        opts::RedisAction::Unapply => format!(
-            "rm {}",
-            redis_conf_dir
-                .join(config.redis_conf_file)
                 .to_str()
                 .unwrap(),
         ),
