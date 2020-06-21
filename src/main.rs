@@ -1,12 +1,12 @@
+use chrono::{DateTime, Local};
+use clap::Clap;
+use itertools::Itertools;
+use regex::Regex;
 use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
-
-use chrono::{DateTime, Local};
-use clap::Clap;
-use regex::Regex;
 
 mod config;
 mod opts;
@@ -107,24 +107,29 @@ fn nginx(opts: opts::NginxOpts) {
     let nginx_conf_dir = PathBuf::from(config.nginx_conf_dir);
 
     let command = match opts.action {
-        opts::NginxAction::Restart => config.nginx_restart_command,
-        opts::NginxAction::Backup => format!(
-            "cp -r {} {}",
-            nginx_conf_dir.to_str().unwrap(),
-            project_root.join("nginx.backup").to_str().unwrap()
-        ),
-        opts::NginxAction::Apply => format!(
-            "cp {} {}",
-            project_root.join(config.nginx_conf_file).to_str().unwrap(),
-            nginx_conf_dir.to_str().unwrap()
-        ),
-        opts::NginxAction::Unapply => format!(
-            "rm {}",
-            nginx_conf_dir
-                .join(config.nginx_conf_file)
-                .to_str()
-                .unwrap(),
-        ),
+        opts::NginxAction::Reload => config.nginx_reload_command,
+        opts::NginxAction::Init => config
+            .nginx_conf_files
+            .iter()
+            .map(|s| {
+                format!(
+                    "cp -r {} {}",
+                    nginx_conf_dir.join(s).to_str().unwrap(),
+                    project_root.join("nginx").join(s).to_str().unwrap()
+                )
+            })
+            .join(";"),
+        opts::NginxAction::Apply => config
+            .nginx_conf_files
+            .iter()
+            .map(|s| {
+                format!(
+                    "cp -r {} {}",
+                    project_root.join("nginx").join(s).to_str().unwrap(),
+                    nginx_conf_dir.join(s).to_str().unwrap()
+                )
+            })
+            .join(";"),
     };
 
     if opts.dry {

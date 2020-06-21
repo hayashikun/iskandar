@@ -4,13 +4,13 @@ use toml;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub project_root: String,
-    pub nginx_conf_file: String,
+    pub nginx_conf_files: Vec<String>,
     pub mysql_conf_file: String,
     pub redis_conf_file: String,
     pub nginx_conf_dir: String,
     pub mysql_conf_dir: String,
     pub redis_conf_dir: String,
-    pub nginx_restart_command: String,
+    pub nginx_reload_command: String,
     pub mysql_restart_command: String,
     pub redis_restart_command: String,
     pub benchmark_command: String,
@@ -22,13 +22,13 @@ impl Config {
     pub fn template() -> Config {
         return Config {
             project_root: "".to_string(),
-            nginx_conf_file: "nginx.conf".to_string(),
+            nginx_conf_files: vec!["nginx.conf", "conf.d/"].iter().map(|s| s.to_string()).collect(),
             mysql_conf_file: "mysql.cnf".to_string(),
             redis_conf_file: "redis.cnf".to_string(),
-            nginx_conf_dir: "/etc/nginx/conf.d/".to_string(),
+            nginx_conf_dir: "/etc/nginx/".to_string(),
             mysql_conf_dir: "/etc/mysql/conf.d/".to_string(),
             redis_conf_dir: "/etc/redis/".to_string(),
-            nginx_restart_command: "echo please edit iskandar.toml to restart nginx".to_string(),
+            nginx_reload_command: "nginx -s reload".to_string(),
             mysql_restart_command: "echo please edit iskandar.toml to restart mysql".to_string(),
             redis_restart_command: "echo please edit iskandar.toml to restart redis".to_string(),
             benchmark_command:

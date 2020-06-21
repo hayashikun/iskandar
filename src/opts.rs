@@ -27,10 +27,9 @@ pub struct NginxOpts {
 }
 
 pub enum NginxAction {
-    Restart,
-    Backup,
+    Init,
+    Reload,
     Apply,
-    Unapply,
 }
 
 impl FromStr for NginxAction {
@@ -38,10 +37,9 @@ impl FromStr for NginxAction {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "restart" => Ok(NginxAction::Restart),
-            "backup" => Ok(NginxAction::Backup),
+            "init" => Ok(NginxAction::Init),
+            "reload" => Ok(NginxAction::Reload),
             "apply" => Ok(NginxAction::Apply),
-            "unapply" => Ok(NginxAction::Unapply),
             _ => Err("no match"),
         }
     }
