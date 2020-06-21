@@ -3,7 +3,6 @@ use toml;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    pub dry_run: bool,
     pub project_root: String,
     pub nginx_conf_file: String,
     pub mysql_conf_file: String,
@@ -22,7 +21,6 @@ pub struct Config {
 impl Config {
     pub fn template() -> Config {
         return Config {
-            dry_run: false,
             project_root: "".to_string(),
             nginx_conf_file: "nginx.conf".to_string(),
             mysql_conf_file: "mysql.cnf".to_string(),
@@ -34,10 +32,10 @@ impl Config {
             mysql_restart_command: "echo please edit iskandar.toml to restart mysql".to_string(),
             redis_restart_command: "echo please edit iskandar.toml to restart redis".to_string(),
             benchmark_command:
-                "echo please edit iskandar.toml; echo benchmark start; echo benchmark score: 88.4 point; echo benchmark end"
-                    .to_string(),
+            "echo please edit iskandar.toml; echo benchmark start; echo benchmark score: 88.4 point; echo benchmark end"
+                .to_string(),
             benchmark_score_regex: r"score: ([\d.]+) point".to_string(),
-            deploy_command: "echo please edit iskandar.toml; echo deploy!".to_string()
+            deploy_command: "echo please edit iskandar.toml; echo deploy!".to_string(),
         };
     }
 
