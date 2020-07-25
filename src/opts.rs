@@ -12,7 +12,7 @@ pub struct Opts {
 pub enum Target {
     Init,
     Deploy(DeployOpts),
-    Benchmark,
+    Benchmark(BenchmarkOpts),
     Nginx(NginxOpts),
     Mysql(MysqlOpts),
 }
@@ -24,6 +24,15 @@ pub struct DeployOpts {
 
     #[clap(short, long, about = "Dry run")]
     pub dry: bool,
+}
+
+#[derive(Clap)]
+pub struct BenchmarkOpts {
+    #[clap(short, long, about = "Save nginx access log")]
+    pub access_log: bool,
+
+    #[clap(short, long, about = "Save mysql slow log")]
+    pub slow_log: bool,
 }
 
 #[derive(Clap)]

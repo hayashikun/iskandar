@@ -1,5 +1,5 @@
-use crate::opts::DeployOpts;
-use chrono::{DateTime, Local};
+use crate::opts::{BenchmarkOpts, DeployOpts};
+use chrono::Local;
 use clap::Clap;
 use regex::Regex;
 use std::fs;
@@ -16,7 +16,7 @@ fn main() {
     match opts.target {
         opts::Target::Init => init(),
         opts::Target::Deploy(opts) => deploy(opts),
-        opts::Target::Benchmark => benchmark(),
+        opts::Target::Benchmark(opts) => benchmark(opts),
         opts::Target::Nginx(opts) => nginx(opts),
         opts::Target::Mysql(opts) => mysql(opts),
     };
@@ -25,6 +25,8 @@ fn main() {
 fn init() {
     let config = load_config();
     fs::write("iskandar.toml", config.to_toml()).expect("Failed to save iskandar.toml");
+
+    fs::create_dir("out").expect("Failed to create out dir");
 }
 
 fn load_config() -> config::Config {
@@ -66,13 +68,12 @@ fn deploy(opts: DeployOpts) {
     }
 }
 
-fn save_score(score: f32) {
-    let datetime: DateTime<Local> = Local::now();
+fn save_score(path: PathBuf, datetime: &String, score: f32) {
     let mut file = fs::OpenOptions::new()
         .create(true)
         .write(true)
         .append(true)
-        .open("score.csv")
+        .open(path)
         .unwrap();
     if file.metadata().unwrap().len() == 0 {
         writeln!(file, "datetime, score").unwrap();
@@ -80,8 +81,19 @@ fn save_score(score: f32) {
     writeln!(file, "{}, {}", datetime, score).unwrap();
 }
 
-fn benchmark() {
+fn benchmark(opts: BenchmarkOpts) {
     let config = load_config();
+    let project_root = PathBuf::from(config.project_root);
+    let datetime = Local::now().format("%Y%m%d%H%M%S").to_string();
+    println!("{}", datetime);
+
+    if opts.access_log {
+        run_command(format!("echo '' > {}", config.nginx_access_log).to_string());
+    }
+    if opts.slow_log {
+        run_command(format!("echo '' > {}", config.mysql_slow_log).to_string());
+    }
+
     let lines = run_command(config.benchmark_command);
 
     let re = Regex::new(&config.benchmark_score_regex).unwrap();
@@ -94,9 +106,36 @@ fn benchmark() {
                 .trim()
                 .parse()
                 .expect("Failed to parse score");
-            save_score(score);
+            save_score(project_root.join("out/score.csv"), &datetime, score);
             break;
         }
+    }
+
+    if opts.access_log {
+        run_command(
+            format!(
+                "cp {} {}",
+                config.nginx_access_log,
+                project_root
+                    .join(format!("out/access_{}.log", datetime))
+                    .to_str()
+                    .unwrap()
+            )
+            .to_string(),
+        );
+    }
+    if opts.slow_log {
+        run_command(
+            format!(
+                "cp {} {}",
+                config.mysql_slow_log,
+                project_root
+                    .join(format!("out/slow_{}.log", datetime))
+                    .to_str()
+                    .unwrap()
+            )
+            .to_string(),
+        );
     }
 }
 

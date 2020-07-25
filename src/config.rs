@@ -34,6 +34,12 @@ pub struct Config {
     #[serde(default = "default_benchmark_score_regex")]
     pub benchmark_score_regex: String,
 
+    #[serde(default = "default_nginx_access_log")]
+    pub nginx_access_log: String,
+
+    #[serde(default = "default_mysql_slow_log")]
+    pub mysql_slow_log: String,
+
     #[serde(default = "default_deploy_command")]
     pub deploy_command: String,
 }
@@ -80,6 +86,14 @@ fn default_benchmark_command() -> String {
 
 fn default_benchmark_score_regex() -> String {
     r"score: ([\d.]+) point".to_string()
+}
+
+fn default_nginx_access_log() -> String {
+    "/var/log/nginx/access.log".to_string()
+}
+
+fn default_mysql_slow_log() -> String {
+    "/var/log/slow.log".to_string()
 }
 
 fn default_deploy_command() -> String {
