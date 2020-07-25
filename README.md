@@ -1,5 +1,8 @@
 # iskandar - Powerful tool for isucon
 
+![Rust](https://github.com/hayashikun/iskandar/workflows/Rust/badge.svg?branch=master)
+![Release](https://github.com/hayashikun/iskandar/workflows/Release/badge.svg)
+
 ### `init`
 
 ```
