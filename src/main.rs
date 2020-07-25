@@ -137,6 +137,10 @@ fn benchmark(opts: BenchmarkOpts) {
             .to_string(),
         );
     }
+
+    if opts.commit {
+        run_command(format!("git add out; git commit -m 'benchmark {}';", datetime).to_string());
+    }
 }
 
 fn nginx(opts: opts::NginxOpts) {
