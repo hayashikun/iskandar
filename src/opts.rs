@@ -28,15 +28,20 @@ pub struct DeployOpts {
 
 #[derive(Clap)]
 pub struct NginxOpts {
+    #[clap(subcommand)]
     pub action: NginxAction,
 
     #[clap(short, long, about = "Dry run")]
     pub dry: bool,
 }
 
+#[derive(Clap)]
 pub enum NginxAction {
+    #[clap(about = "Copy nginx_conf_file from nginx_conf_dir to project dir, and make backup")]
     Init,
+    #[clap(about = "Reload nginx")]
     Reload,
+    #[clap(about = "Copy nginx_conf_file from project dir to nginx_conf_dir")]
     Apply,
 }
 
@@ -55,15 +60,20 @@ impl FromStr for NginxAction {
 
 #[derive(Clap)]
 pub struct MysqlOpts {
+    #[clap(subcommand)]
     pub action: MysqlAction,
 
     #[clap(short, long, about = "Dry run")]
     pub dry: bool,
 }
 
+#[derive(Clap)]
 pub enum MysqlAction {
-    Restart,
+    #[clap(about = "Copy mysql_conf_file from mysql_conf_dir to project dir, and make backup")]
     Init,
+    #[clap(about = "Restart mysql")]
+    Restart,
+    #[clap(about = "Copy mysql_conf_file from project dir to mysql_conf_dir")]
     Apply,
 }
 

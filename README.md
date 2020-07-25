@@ -1,35 +1,73 @@
 # iskandar
 
 ### `init`
-Create config file `iskandar.toml`
+
+```
+USAGE:
+    iskandar init
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+```
 
 ### `deploy`
-Deploy application
+
+```
+USAGE:
+    iskandar deploy [FLAGS]
+
+FLAGS:
+    -d, --dry        Dry run
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+    -w, --wo-pull    Without git pull
+```
 
 ### `benchmark`
-Run benchmark
+
+```
+USAGE:
+    iskandar benchmark
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+```
+
 
 ## nginx
 
-### `nginx init`
-Copy `nginx_conf_files` from `nginx_conf_dir` to project dir
+```
+USAGE:
+    iskandar nginx [FLAGS] <SUBCOMMAND>
 
-### `nginx reload`
-Reload ngix
+FLAGS:
+    -d, --dry        Dry run
+    -h, --help       Prints help information
+    -V, --version    Prints version information
 
-### `nginx apply`
-Copy `nginx_conf_files`  from project dir to `nginx_conf_dir`
+SUBCOMMANDS:
+    apply     Copy nginx_conf_file from project dir to nginx_conf_dir
+    help      Prints this message or the help of the given subcommand(s)
+    init      Copy nginx_conf_file from nginx_conf_dir to project dir, and make backup
+    reload    Reload nginx
+```
 
 ## mysql
 
-### `mysql restart`
-Restart mysql
+```
+USAGE:
+    iskandar mysql [FLAGS] <SUBCOMMAND>
 
-### `mysql backup`
-Backup `mysql_conf_dir`
+FLAGS:
+    -d, --dry        Dry run
+    -h, --help       Prints help information
+    -V, --version    Prints version information
 
-### `mysql apply`
-Copy `mysql_conf_file` to `mysql_conf_dir`
-
-### `mysql unapply`
-Remove `mysql_conf_file` from `mysql_conf_dir`
+SUBCOMMANDS:
+    apply      Copy mysql_conf_file from project dir to mysql_conf_dir
+    help       Prints this message or the help of the given subcommand(s)
+    init       Copy mysql_conf_file from mysql_conf_dir to project dir, and make backup
+    restart    Restart mysql
+```
