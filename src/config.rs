@@ -4,7 +4,7 @@ use toml;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub project_root: String,
-    pub nginx_conf_files: Vec<String>,
+    pub nginx_conf_file: String,
     pub mysql_conf_file: String,
     pub nginx_conf_dir: String,
     pub mysql_conf_dir: String,
@@ -19,7 +19,7 @@ impl Config {
     pub fn template() -> Config {
         return Config {
             project_root: "".to_string(),
-            nginx_conf_files: vec!["nginx.conf", "conf.d/"].iter().map(|s| s.to_string()).collect(),
+            nginx_conf_file: "nginx.conf".to_string(),
             mysql_conf_file: "mysql.cnf".to_string(),
             nginx_conf_dir: "/etc/nginx/".to_string(),
             mysql_conf_dir: "/etc/mysql/conf.d/".to_string(),

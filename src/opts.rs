@@ -54,9 +54,8 @@ pub struct MysqlOpts {
 
 pub enum MysqlAction {
     Restart,
-    Backup,
+    Init,
     Apply,
-    Unapply,
 }
 
 impl FromStr for MysqlAction {
@@ -65,9 +64,8 @@ impl FromStr for MysqlAction {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "restart" => Ok(MysqlAction::Restart),
-            "backup" => Ok(MysqlAction::Backup),
+            "backup" => Ok(MysqlAction::Init),
             "apply" => Ok(MysqlAction::Apply),
-            "unapply" => Ok(MysqlAction::Unapply),
             _ => Err("no match"),
         }
     }

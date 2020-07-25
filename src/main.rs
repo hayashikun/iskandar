@@ -1,6 +1,5 @@
 use chrono::{DateTime, Local};
 use clap::Clap;
-use itertools::Itertools;
 use regex::Regex;
 use std::env;
 use std::fs::{File, OpenOptions};
@@ -104,31 +103,25 @@ fn nginx(opts: opts::NginxOpts) {
     let config = load_config();
     let project_root = PathBuf::from(config.project_root);
     let nginx_conf_dir = PathBuf::from(config.nginx_conf_dir);
+    let nginx_conf_file = config.nginx_conf_file;
 
     let command = match opts.action {
         opts::NginxAction::Reload => config.nginx_reload_command,
-        opts::NginxAction::Init => config
-            .nginx_conf_files
-            .iter()
-            .map(|s| {
-                format!(
-                    "cp -r {} {}",
-                    nginx_conf_dir.join(s).to_str().unwrap(),
-                    project_root.join("nginx").join(s).to_str().unwrap()
-                )
-            })
-            .join(";"),
-        opts::NginxAction::Apply => config
-            .nginx_conf_files
-            .iter()
-            .map(|s| {
-                format!(
-                    "cp -r {} {}",
-                    project_root.join("nginx").join(s).to_str().unwrap(),
-                    nginx_conf_dir.join(s).to_str().unwrap()
-                )
-            })
-            .join(";"),
+        opts::NginxAction::Init => format!(
+            "cp {} {}; cp {} {}",
+            nginx_conf_dir.join(&nginx_conf_file).to_str().unwrap(),
+            project_root.join(&nginx_conf_file).to_str().unwrap(),
+            project_root.join(&nginx_conf_file).to_str().unwrap(),
+            project_root
+                .join(format!("{}.backup", &nginx_conf_file))
+                .to_str()
+                .unwrap(),
+        ),
+        opts::NginxAction::Apply => format!(
+            "cp {} {}",
+            project_root.join(&nginx_conf_file).to_str().unwrap(),
+            nginx_conf_dir.join(&nginx_conf_file).to_str().unwrap()
+        ),
     };
 
     if opts.dry {
@@ -142,25 +135,24 @@ fn mysql(opts: opts::MysqlOpts) {
     let config = load_config();
     let project_root = PathBuf::from(config.project_root);
     let mysql_conf_dir = PathBuf::from(config.mysql_conf_dir);
+    let mysql_conf_file = config.mysql_conf_file;
 
     let command = match opts.action {
         opts::MysqlAction::Restart => config.mysql_restart_command,
-        opts::MysqlAction::Backup => format!(
-            "cp -r {} {}",
-            mysql_conf_dir.to_str().unwrap(),
-            project_root.join("mysql.backup").to_str().unwrap()
+        opts::MysqlAction::Init => format!(
+            "cp {} {}; cp {} {}",
+            mysql_conf_dir.join(&mysql_conf_file).to_str().unwrap(),
+            project_root.join(&mysql_conf_file).to_str().unwrap(),
+            project_root.join(&mysql_conf_file).to_str().unwrap(),
+            project_root
+                .join(format!("{}.backup", &mysql_conf_file))
+                .to_str()
+                .unwrap(),
         ),
         opts::MysqlAction::Apply => format!(
             "cp {} {}",
-            project_root.join(config.mysql_conf_file).to_str().unwrap(),
+            project_root.join(&mysql_conf_file).to_str().unwrap(),
             mysql_conf_dir.to_str().unwrap()
-        ),
-        opts::MysqlAction::Unapply => format!(
-            "rm {}",
-            mysql_conf_dir
-                .join(config.mysql_conf_file)
-                .to_str()
-                .unwrap(),
         ),
     };
 
