@@ -5,7 +5,7 @@ use regex::Regex;
 use std::fs;
 use std::io::{BufRead, BufReader, Write};
 use std::path::PathBuf;
-use std::process::{Command, Stdio};
+use std::process::{Child, Command, Stdio};
 
 mod config;
 mod opts;
@@ -81,6 +81,15 @@ fn save_score(path: PathBuf, datetime: &String, score: f32) {
     writeln!(file, "{}, {}", datetime, score).unwrap();
 }
 
+fn vmstat(path: PathBuf, interval: u32) -> Child {
+    let file = fs::File::create(path).unwrap();
+    Command::new("vmstat")
+        .arg(format!("-t {}", interval))
+        .stdout(Stdio::from(file))
+        .spawn()
+        .expect("Failed to run command")
+}
+
 fn benchmark(opts: BenchmarkOpts) {
     let config = load_config();
     let project_root = PathBuf::from(config.project_root);
@@ -94,7 +103,20 @@ fn benchmark(opts: BenchmarkOpts) {
         run_command(format!("echo '' > {}", config.mysql_slow_log).to_string());
     }
 
+    let child = if opts.vmstat {
+        Some(vmstat(
+            project_root.join(format!("out/vmstat_{}.txt", datetime)),
+            1,
+        ))
+    } else {
+        None
+    };
     let lines = run_command(config.benchmark_command);
+
+    if let Some(mut child) = child {
+        child.kill().expect("Failed to stop vmstat");
+        println!("vmstat result: out/vmstat_{}.txt", datetime)
+    }
 
     let re = Regex::new(&config.benchmark_score_regex).unwrap();
     for line in lines.iter().rev() {

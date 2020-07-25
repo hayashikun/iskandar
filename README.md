@@ -36,6 +36,7 @@ FLAGS:
     -h, --help          Prints help information
     -s, --slow-log      Save mysql slow log
     -V, --version       Prints version information
+    -v, --vmstat        Run vmstat
 ```
 
 

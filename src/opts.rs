@@ -34,6 +34,9 @@ pub struct BenchmarkOpts {
     #[clap(short, long, about = "Save mysql slow log")]
     pub slow_log: bool,
 
+    #[clap(short, long, about = "Run vmstat")]
+    pub vmstat: bool,
+
     #[clap(short, long, about = "Commit results")]
     pub commit: bool,
 }
