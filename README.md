@@ -1,4 +1,4 @@
-# iskandar
+# iskandar - Powerful tool for isucon
 
 ### `init`
 
@@ -28,11 +28,14 @@ FLAGS:
 
 ```
 USAGE:
-    iskandar benchmark
+    iskandar benchmark [FLAGS]
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    -a, --access-log    Save nginx access log
+    -c, --commit        Commit results
+    -h, --help          Prints help information
+    -s, --slow-log      Save mysql slow log
+    -V, --version       Prints version information
 ```
 
 
