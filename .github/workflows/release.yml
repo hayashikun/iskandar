@@ -2,19 +2,37 @@ name: Release
 
 on:
   push:
-    branches: [ master ]
-
-env:
-  CARGO_TERM_COLOR: always
+    tags:
+      - 'v*'
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      -
     - name: Build
+      env:
+        CARGO_TERM_COLOR: always
       run: cargo build --release
-    - uses: actions/upload-artifact@v1
+
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: build
-        path: target/release/iskandar
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload release
+      id: upload_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/release/iskandar
+        asset_name: iskandar
+        asset_content_type: application/octet-stream
