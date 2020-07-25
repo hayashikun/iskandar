@@ -2,9 +2,8 @@ use crate::opts::DeployOpts;
 use chrono::{DateTime, Local};
 use clap::Clap;
 use regex::Regex;
-use std::env;
-use std::fs::{File, OpenOptions};
-use std::io::{BufRead, BufReader, Read, Write};
+use std::fs;
+use std::io::{BufRead, BufReader, Write};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
@@ -24,23 +23,12 @@ fn main() {
 }
 
 fn init() {
-    let mut config = config::Config::template();
-    config.project_root = env::current_dir()
-        .unwrap()
-        .into_os_string()
-        .into_string()
-        .unwrap();
-
-    let mut file = File::create("iskandar.toml").unwrap();
-    writeln!(&mut file, "{}", config.to_toml()).unwrap();
+    let config = load_config();
+    fs::write("iskandar.toml", config.to_toml()).expect("Failed to save iskandar.toml");
 }
 
 fn load_config() -> config::Config {
-    let mut toml = String::new();
-    File::open("iskandar.toml")
-        .unwrap()
-        .read_to_string(&mut toml)
-        .unwrap();
+    let toml = fs::read_to_string("iskandar.toml").unwrap_or("".to_string());
     config::Config::from_toml(toml)
 }
 
@@ -80,7 +68,7 @@ fn deploy(opts: DeployOpts) {
 
 fn save_score(score: f32) {
     let datetime: DateTime<Local> = Local::now();
-    let mut file = OpenOptions::new()
+    let mut file = fs::OpenOptions::new()
         .create(true)
         .write(true)
         .append(true)
