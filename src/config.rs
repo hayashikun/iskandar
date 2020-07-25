@@ -4,6 +4,7 @@ use toml;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub project_root: String,
+    pub git_branch: String,
     pub nginx_conf_file: String,
     pub mysql_conf_file: String,
     pub nginx_conf_dir: String,
@@ -19,6 +20,7 @@ impl Config {
     pub fn template() -> Config {
         return Config {
             project_root: "".to_string(),
+            git_branch: "master".to_string(),
             nginx_conf_file: "nginx.conf".to_string(),
             mysql_conf_file: "mysql.cnf".to_string(),
             nginx_conf_dir: "/etc/nginx/".to_string(),

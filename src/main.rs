@@ -1,3 +1,4 @@
+use crate::opts::DeployOpts;
 use chrono::{DateTime, Local};
 use clap::Clap;
 use regex::Regex;
@@ -15,7 +16,7 @@ fn main() {
 
     match opts.target {
         opts::Target::Init => init(),
-        opts::Target::Deploy => deploy(),
+        opts::Target::Deploy(opts) => deploy(opts),
         opts::Target::Benchmark => benchmark(),
         opts::Target::Nginx(opts) => nginx(opts),
         opts::Target::Mysql(opts) => mysql(opts),
@@ -60,9 +61,21 @@ fn run_command(command: String) -> Vec<String> {
     return results;
 }
 
-fn deploy() {
+fn deploy(opts: DeployOpts) {
     let config = load_config();
-    run_command(config.deploy_command);
+    let mut command = config.deploy_command;
+
+    if opts.wo_pull {
+        println!("Deploy without git pull");
+    } else {
+        command = format!("git pull origin {}; {}", config.git_branch, command);
+    }
+
+    if opts.dry {
+        println!("Dry run: {:?}", command);
+    } else {
+        run_command(command);
+    }
 }
 
 fn save_score(score: f32) {

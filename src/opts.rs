@@ -11,10 +11,19 @@ pub struct Opts {
 #[derive(Clap)]
 pub enum Target {
     Init,
-    Deploy,
+    Deploy(DeployOpts),
     Benchmark,
     Nginx(NginxOpts),
     Mysql(MysqlOpts),
+}
+
+#[derive(Clap)]
+pub struct DeployOpts {
+    #[clap(short, long, about = "Without git pull")]
+    pub wo_pull: bool,
+
+    #[clap(short, long, about = "Dry run")]
+    pub dry: bool,
 }
 
 #[derive(Clap)]
