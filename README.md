@@ -3,7 +3,15 @@
 ![Rust](https://github.com/hayashikun/iskandar/workflows/Rust/badge.svg?branch=master)
 ![Release](https://github.com/hayashikun/iskandar/workflows/Release/badge.svg)
 
-### `init`
+## Install
+```
+$ curl -O https://github.com/hayashikun/iskandar/releases/download/v1.0/iskandar
+$ chmod a+x iskandar
+```
+
+## Commands
+
+### init
 
 ```
 USAGE:
@@ -14,7 +22,7 @@ FLAGS:
     -V, --version    Prints version information
 ```
 
-### `deploy`
+### deploy
 
 ```
 USAGE:
@@ -27,7 +35,7 @@ FLAGS:
     -w, --wo-pull    Without git pull
 ```
 
-### `benchmark`
+### benchmark
 
 ```
 USAGE:
@@ -43,7 +51,7 @@ FLAGS:
 ```
 
 
-## nginx
+### nginx
 
 ```
 USAGE:
@@ -61,7 +69,7 @@ SUBCOMMANDS:
     reload    Reload nginx
 ```
 
-## mysql
+### mysql
 
 ```
 USAGE:
